@@ -67,9 +67,28 @@ class HeadlessH5PServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
         //$this->loadFactoriesFrom(__DIR__ . '/../database/factories');
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'h5p');
         $this->mergeConfigFrom(__DIR__.'/../config/hh5p.php', 'hh5p');
+        $this->configurePublishing();
         // Load configs
+    }
+
+    /**
+     * Configure the publishable resources offered by the package.
+     *
+     * @return void
+     */
+    protected function configurePublishing()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../stubs/h5p.php' => config_path('h5p.php'),
+            ], 'headless-h5p-config');
+
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations'),
+            ], 'headless-h5p-migrations');
+        }
     }
 }
